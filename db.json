@@ -1,0 +1,46 @@
+{
+  "usuarios": [
+    {
+      "nombre": "johan",
+      "email": "johan@gmail.com",
+      "password": "123456",
+      "confirmar": "123456",
+      "rol": "administrador",
+      "id": 1
+    },
+    {
+      "nombre": "yesid",
+      "email": "yesid@gmail.com",
+      "password": "102366",
+      "confirmar": "102366",
+      "rol": "usuario",
+      "id": 2
+    }
+  ],
+  "tickets": [
+    {
+      "nombre": "Patricio",
+      "email": "Patriciohernandez@gmail.com",
+      "telefono": "3204854579",
+      "asunto": "Problemas con mi WIFI",
+      "mensaje": "desde hace una semana tengo problemas con mi internet",
+      "id": 2
+    },
+    {
+      "nombre": "johan",
+      "email": "johan@gmail.com",
+      "telefono": "4444444444",
+      "asunto": "comida dañada",
+      "mensaje": "q dia fui a comer y me encontre un pelo",
+      "id": 3
+    },
+    {
+      "nombre": "juan",
+      "email": "juanchito@gmail.com",
+      "telefono": "3102276950",
+      "asunto": "Error en el PC",
+      "mensaje": "se me detecto un error en el hardware y no sale en el pc",
+      "id": 4
+    }
+  ]
+}
