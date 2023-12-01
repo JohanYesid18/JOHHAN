@@ -1,9 +1,107 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-//import APIInvoke from "../../utils/APIInvoke";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import APIInvoke from "../../utils/APIInvoke";
+import swal from "sweetalert";
 
-export default function ConsultarTicket() {
 
+export default function ConsultarTicketEmp() {
+  const [ticket, setticket] = useState([
+  ]);
+  const tickets = async () => {
+    try {
+      var response = await APIInvoke.invokeGET(`/tickets`);
+      console.log("Respuesta de la API:", response);
+
+      if (Array.isArray(response) && response.length > 0) {
+        setticket(response);
+      } else {
+        console.error("La respuesta de la API no contiene tickets.");
+      }
+    } catch (error) {
+      console.error("Error al cargar los tickets", error);
+    }
+  };
+ 
+  const  casa = "gestionada";
+  
+  const { nombre, email, telefono, asunto, mensaje, estado } = ticket;
+  //se invoca el id y se hace el proceso de actualizar
+  const actualizarTicket = async (e, id) => {
+    e.preventDefault();
+    const verificarExistenciaproyecto = async (id) => {
+      try {
+        const response = await APIInvoke.invokeGET(`/tickets?id=${id}`);
+        if (response && response.length > 0) {
+          return true; // El usuario ya existe
+        }
+        return false; // El usuario no existe
+      } catch (error) {
+        console.error(error);
+        return false; // Maneja el error si la solicitud falla
+      }
+    };
+
+    const TicketExistente = await verificarExistenciaproyecto(id);
+    console.log(TicketExistente)
+    if (TicketExistente) {
+      const response = await APIInvoke.invokePUT(`/tickets/${id}`,{ 
+      "estado": "Resuelto"
+    });
+      const msg = "el ticket se ha actualizo correctamente";
+      new swal({
+        title: "Informacion",
+        text: msg,
+        icon: "success",
+        buttons: {
+          confirmar: {
+            text: "Ok",
+            value: true,
+            visible: true,
+            className: "btn btn-prymari",
+            closeModal: true,
+          },
+        },
+      });
+      tickets();
+    } else {
+      const msg = "La cita  No se  Pudo actualizar";
+      new swal({
+        title: "Error",
+        text: msg,
+        icon: "error",
+        buttons: {
+          confirmar: {
+            text: "Ok",
+            value: true,
+            visible: true,
+            className: "btn btn-danger",
+            closeModal: true,
+          },
+        },
+      });
+    }
+
+  };
+  const TicketsU = async () => {
+    try {
+      var response = await APIInvoke.invokeGET(`/citas`);
+      console.log("Respuesta de la API:", response);
+
+      if (Array.isArray(response) && response.length > 0) {
+        setticket(response);
+      } else {
+        console.error("La respuesta de la API no contiene citas.");
+      }
+    } catch (error) {
+      console.error("Error al cargar las citas", error);
+    }
+  };
+
+  useEffect(() => {
+    tickets();
+    
+  }, []);
+ 
   return (
     <div style={{backgroundColor:"white"}}>
       <nav style={{backgroundColor:"#13265c"}} className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -162,7 +260,7 @@ export default function ConsultarTicket() {
         with font-awesome or any other icon font library */}
 
              <li className="nav-item">
-               <Link to={"/Home"} className="nav-link">
+               <Link to={"/Empleado"} className="nav-link">
                  <i className="nav-icon fas fa-th" />
                  <p>Bienvenido</p>
                </Link>
@@ -171,54 +269,19 @@ export default function ConsultarTicket() {
                <Link href="#" className="nav-link">
                  <i className="nav-icon fas fa-copy" />
                  <p>
-                   Atencion al cliente
+                   Bandeja de Entrada
                    <i className="fas fa-angle-left right" />
                    <span className="badge badge-info right">6</span>
                  </p>
                </Link>
                <ul className="nav nav-treeview">
                  <li className="nav-item">
-                   <Link to={"/crearsolicitud"} className="nav-link">
-                     <i className="far fa-circle nav-icon" />
-                     <p>Crear Ticket</p>
-                   </Link>
-                 </li>
-                 <li className="nav-item">
                    <Link
-                     to={"/ConsultarTicket"}
+                     to={"/ConsultarTicketEmp"}
                      className="nav-link"
                    >
                      <i className="far fa-circle nav-icon" />
-                     <p>Consultar Ticket</p>
-                   </Link>
-                 </li>
-                 <li className="nav-item">
-                   <Link to={"/EditarTicket"} className="nav-link">
-                     <i className="far fa-circle nav-icon" />
-                     <p>Editar Ticket</p>
-                   </Link>
-                 </li>
-               </ul>
-             </li>
-             <li className="nav-item">
-               <Link href="#" className="nav-link">
-                 <i className="nav-icon fas fa-chart-pie" />
-                 <p>
-                   Chat
-                   <i className="right fas fa-angle-left" />
-                 </p>
-               </Link>
-               <ul className="nav nav-treeview">
-                 <li className="nav-item">
-                   <Link href="pages/charts/chartjs.html" className="nav-link">
-                     <i className="far fa-circle nav-icon" />
-                     <p>Cliente</p>
-                   </Link>
-                 </li>
-                 <li className="nav-item">
-                   <Link href="pages/charts/flot.html" className="nav-link">
-                     <i className="far fa-circle nav-icon" />
-                     <p>Empleado</p>
+                     <p>Tickets</p>
                    </Link>
                  </li>
                </ul>
@@ -230,103 +293,88 @@ export default function ConsultarTicket() {
        {/* /.sidebar */}
      </aside>
      <div className="content-wrapper">
-    {/* Content Header (Page header) */}
-    <section className="content-header">
-      <div className="container-fluid">
-        <div className="row mb-2">
-          <div className="col-sm-6">
-            <h1>Tickets</h1>
-          </div>
-          <div className="col-sm-6">
-            <ol className="breadcrumb float-sm-right">
-              <li className="breadcrumb-item"><Link to={"/Home"}>Home</Link></li>
-              <li className="breadcrumb-item active">Tickets</li>
-            </ol>
+        <div className="content-header">
+          <div className="container-fluid">
+            <div className="row mb-2">
+              <div className="col-sm-6">
+                <h1 className="m-0">ServiPlus</h1>
+              </div>
+              <div className="col-sm-6"></div>
+            </div>
           </div>
         </div>
-      </div>{/* /.container-fluid */}
-    </section>
-    {/* Main content */}
-    <section className="content">
-      {/* Default box */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Tickets</h3>
-          <div className="card-tools">
-            <button type="button" className="btn btn-tool" data-card-widget="collapse" title="Collapse">
-              <i className="fas fa-minus" />
-            </button>
-            <button type="button" className="btn btn-tool" data-card-widget="remove" title="Remove">
-              <i className="fas fa-times" />
-            </button>
+
+        <section className="content" style={{ maxWidth:2350 , minWidth:1550 }}>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-8">
+                <div className="card">
+                  <div className="card-header border-transparent">
+                    <div className="card-tools">
+                      <button
+                        type="button"
+                        className="btn btn-tool"
+                        data-card-widget="collapse"
+                      >
+                        <i className="fas fa-minus" />
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-tool"
+                        data-card-widget="remove"
+                      >
+                        <i className="fas fa-times" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="card-body p-0">
+                    <div className="table-responsive">
+                      <table className="table m-0">
+                        <thead>
+                          <tr>
+                            <th>id Ticket</th>
+                            <th>nombre del Ticket</th>
+                            <th>email del Ticket</th>
+                            <th>numero del Ticket</th>
+                            <th>asunto del Ticket</th>
+                            <th>mensaje del Ticket</th>
+                            <th>estado del Ticket</th>
+                            <th>operadores</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {ticket.map((item) => (
+                            <tr>
+                              <td>{item.id}</td>
+                              <td>{item.nombre}</td>
+                              <td>{item.email}</td>
+                              <td>{item.numero}</td>
+                              <td>{item.asunto}</td>
+                              <td>{item.mensaje}</td>
+                              <td>{item.estado}</td>
+                              <td>
+                                <Link
+                                  onClick={(e) => actualizarTicket(e, item.id)}
+                                  className="btn btn-sm btn-info float-left"
+                                >
+                                  confirmar Respuesta
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div className="card-footer clearfix">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="card-body p-0">
-          <table className="table table-striped projects">
-            <thead>
-              <tr>
-                <th style={{width: '1%'}}>
-                  #
-                </th>
-                <th style={{width: '20%'}}>
-                  Ticket Name
-                </th>
-                <th style={{width: '30%'}}>
-                  User 
-                </th>
-                <th style={{width: '8%'}} className="text-center">
-                  Status
-                </th>
-                <th style={{width: '20%'}}>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  #
-                </td>
-                <td>
-                  <a>
-                    AdminLTE v3
-                  </a>
-                  <br />
-                  <small>
-                    Created 01.01.2019
-                  </small>
-                </td>
-                <td>
-                  <ul className="list-inline">
-                    <li className="list-inline-item">
-                      <img alt="Avatar" className="table-avatar" src="../../dist/img/avatar.png" />
-                    </li>
-                  </ul>
-                </td>
-                <td class="project_progress">
-                          <div class="progress progress-sm">
-                              <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57" aria-valuemin="0" aria-valuemax="100">
-                              </div>
-                          </div>
-                          <small>
-                              57% Complete
-                          </small>
-                      </td>
-                <td className="project-state">
-                  <span className="badge badge-success">Success</span>
-                </td>
-              </tr>
-           
-              
-              
-            </tbody>
-          </table>
-        </div>
-        {/* /.card-body */}
+        </section>
       </div>
-      {/* /.card */}
-    </section>
-    {/* /.content */}
-  </div>
      <footer className="main-footer">
        <strong>
          Copyright © 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.

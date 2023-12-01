@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Aside() {
+export default function AsideEmp() {
   return (
     <div>
       <aside style={{backgroundColor:"#13265c"}} className="main-sidebar sidebar-dark-primary elevation-4">
@@ -72,55 +72,20 @@ export default function Aside() {
                 <Link href="#" className="nav-link">
                   <i className="nav-icon fas fa-copy" />
                   <p>
-                    Atencion al cliente
+                   Bandeja de Entrada
                     <i className="fas fa-angle-left right" />
                     <span className="badge badge-info right">6</span>
                   </p>
                 </Link>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
-                    <Link to={"/crearsolicitud"} className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Crear Ticket</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="pages/layout/top-nav-sidebar.html"
+                    <Link
+                      to={"/ConsultarTicketEmp"}
                       className="nav-link"
                     >
                       <i className="far fa-circle nav-icon" />
-                      <p>Consultar Ticket</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="pages/layout/boxed.html" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Editar Ticket</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li className="nav-item">
-                <a href="#" className="nav-link">
-                  <i className="nav-icon fas fa-chart-pie" />
-                  <p>
-                    Chat
-                    <i className="right fas fa-angle-left" />
-                  </p>
-                </a>
-                <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="pages/charts/chartjs.html" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Cliente</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="pages/charts/flot.html" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Empleado</p>
-                    </a>
+                      <p>Tickets</p>
+                    </Link>
                   </li>
                 </ul>
               </li>

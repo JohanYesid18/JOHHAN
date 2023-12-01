@@ -1,7 +1,86 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import APIInvoke from "../../utils/APIInvoke";
+import swal from "sweetalert";
 
 export default function EditarTicket() {
+
+  const [ticket, setticket] = useState([]);
+  const userId = localStorage.getItem("id");
+  const tickets = async () => {
+    try {
+      var response = await APIInvoke.invokeGET(`/tickets?userId=${userId}`);
+      console.log("Respuesta de la API:", response);
+
+      if (Array.isArray(response) && response.length > 0) {
+        setticket(response);
+      } else {
+        console.error("La respuesta de la API no contiene tickets.");
+      }
+    } catch (error) {
+      console.error("Error al cargar los tickets", error);
+    }
+  };
+
+  useEffect(() => {
+    tickets();
+  }, []);
+
+  const eliminarProyecto = async (e, id) => {
+    e.preventDefault();
+    const verificarExistenciaproyecto = async (id) => {
+      const userId = localStorage.getItem("id");
+      try {
+        const response = await APIInvoke.invokeGET(`/tickets?id=${id}`);
+        if (response && response.length > 0) {
+          return true; // El ticket ya existe
+        }
+        return false; // El ticket no existe
+      } catch (error) {
+        console.error(error);
+        return false; // Maneja el error si la solicitud falla
+      }
+    };
+
+    const ticketexistente = await verificarExistenciaproyecto(id);
+
+    if (ticketexistente) {
+      const response = await APIInvoke.invokeDELETE(`/tickets/${id}`);
+      const msg = "ticket eliminado correctamente";
+      new swal({
+        title: "Informacion",
+        text: msg,
+        icon: "success",
+        buttons: {
+          confirmar: {
+            text: "Ok",
+            value: true,
+            visible: true,
+            className: "btn btn-prymari",
+            closeModal: true,
+          },
+        },
+      });
+      tickets();
+    } else {
+      const msg = "El ticket No Pudo Ser Eliminado";
+      new swal({
+        title: "Error",
+        text: msg,
+        icon: "error",
+        buttons: {
+          confirmar: {
+            text: "Ok",
+            value: true,
+            visible: true,
+            className: "btn btn-danger",
+            closeModal: true,
+          },
+        },
+      });
+    }
+  };
+
   return (
     <div style={{backgroundColor:"white"}}>
     <nav style={{backgroundColor:"#13265c"}} className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -18,12 +97,12 @@ export default function EditarTicket() {
          </Link>
        </li>
        <li className="nav-item d-none d-sm-inline-block">
-         <Link to={"/Home"} className="nav-link" style={{color:"white"}}>
+         <Link to={"/Cliente"} className="nav-link" style={{color:"white"}}>
            Home
          </Link>
        </li>
        <li className="nav-item d-none d-sm-inline-block">
-         <Link href="#" className="nav-link" style={{color:"white"}}>
+         <Link href={"/profile"} className="nav-link" style={{color:"white"}}>
            Contact
          </Link>
        </li>
@@ -81,31 +160,31 @@ export default function EditarTicket() {
              15 Notifications
            </span>
            <div className="dropdown-divider" />
-           <a href="#" className="dropdown-item">
+           <Link href="#" className="dropdown-item">
              <i className="fas fa-envelope mr-2" /> 4 new messages
              <span className="float-right text-muted text-sm">3 mins</span>
-           </a>
+           </Link>
            <div className="dropdown-divider" />
-           <a href="#" className="dropdown-item">
+           <Link href="#" className="dropdown-item">
              <i className="fas fa-users mr-2" /> 8 friend requests
              <span className="float-right text-muted text-sm">12 hours</span>
-           </a>
+           </Link>
            <div className="dropdown-divider" />
-           <a href="#" className="dropdown-item">
+           <Link href="#" className="dropdown-item">
              <i className="fas fa-file mr-2" /> 3 new reports
              <span className="float-right text-muted text-sm">2 days</span>
-           </a>
+           </Link>
            <div className="dropdown-divider" />
-           <a href="#" className="dropdown-item dropdown-footer">
+           <Link href="#" className="dropdown-item dropdown-footer">
              See All Notifications
-           </a>
+           </Link>
          </div>
        </li>
      </ul>
    </nav>
    <aside style={{backgroundColor:"#13265c"}} className="main-sidebar sidebar-dark-primary elevation-4">
      {/* Brand Logo */}
-     <Link to={"#"} className="brand-link">
+     <Link to={"/Cliente"} className="brand-link">
        <img
          src="dist/img/s.png"
          alt="AdminLTE Logo"
@@ -160,23 +239,23 @@ export default function EditarTicket() {
       with font-awesome or any other icon font library */}
 
            <li className="nav-item">
-             <Link to={"/Home"} className="nav-link">
+             <Link to={"/Cliente"} className="nav-link">
                <i className="nav-icon fas fa-th" />
                <p>Bienvenido</p>
              </Link>
            </li>
            <li className="nav-item">
-             <a href="#" className="nav-link">
+             <Link href="#" className="nav-link">
                <i className="nav-icon fas fa-copy" />
                <p>
                  Atencion al cliente
                  <i className="fas fa-angle-left right" />
                  <span className="badge badge-info right">6</span>
                </p>
-             </a>
+             </Link>
              <ul className="nav nav-treeview">
                <li className="nav-item">
-                 <Link to={"/crearsolicitud"} className="nav-link">
+                 <Link to={"/crearTicket"} className="nav-link">
                    <i className="far fa-circle nav-icon" />
                    <p>Crear Ticket</p>
                  </Link>
@@ -199,24 +278,18 @@ export default function EditarTicket() {
              </ul>
            </li>
            <li className="nav-item">
-             <a href="#" className="nav-link">
+             <Link href="#" className="nav-link">
                <i className="nav-icon fas fa-chart-pie" />
                <p>
-                 Chat
+                 Chats
                  <i className="right fas fa-angle-left" />
                </p>
-             </a>
+             </Link>
              <ul className="nav nav-treeview">
                <li className="nav-item">
                  <a href="pages/charts/chartjs.html" className="nav-link">
                    <i className="far fa-circle nav-icon" />
-                   <p>Cliente</p>
-                 </a>
-               </li>
-               <li className="nav-item">
-                 <a href="pages/charts/flot.html" className="nav-link">
-                   <i className="far fa-circle nav-icon" />
-                   <p>Empleado</p>
+                   <p>Ver Chat</p>
                  </a>
                </li>
              </ul>
@@ -228,23 +301,21 @@ export default function EditarTicket() {
      {/* /.sidebar */}
    </aside>
    <div className="content-wrapper">
-  {/* Content Header (Page header) */}
-  <section className="content-header">
+      <section className="content-header">
     <div className="container-fluid">
       <div className="row mb-2">
-        <div className="col-sm-6">
-          <h1>Tickets</h1>
+        <div className="col-sm-6" style={{textAlign:"center"}}>
         </div>
         <div className="col-sm-6">
           <ol className="breadcrumb float-sm-right">
-            <li className="breadcrumb-item"><Link to={"/Home"}>Home</Link></li>
+            <li className="breadcrumb-item"><Link to={"/Cliente"}>Home</Link></li>
             <li className="breadcrumb-item active">Tickets</li>
           </ol>
         </div>
       </div>
     </div>{/* /.container-fluid */}
   </section>
-  {/* Main content */}
+
   <section className="content">
     {/* Default box */}
     <div className="card">
@@ -262,77 +333,52 @@ export default function EditarTicket() {
       <div className="card-body p-0">
         <table className="table table-striped projects">
           <thead>
-            <tr>
-              <th style={{width: '1%'}}>
-                #
-              </th>
-              <th style={{width: '20%'}}>
-                Ticket Name
-              </th>
-              <th style={{width: '30%'}}>
-                User 
-              </th>
-              <th style={{width: '8%'}} className="text-center">
-                Status
-              </th>
-              <th style={{width: '20%'}}>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                #
-              </td>
-              <td>
-                <a>
-                  AdminLTE v3
-                </a>
-                <br />
-                <small>
-                  Created 01.01.2019
-                </small>
-              </td>
-              <td>
-                <ul className="list-inline">
-                  <li className="list-inline-item">
-                    <img alt="Avatar" className="table-avatar" src="../../dist/img/avatar.png" />
-                  </li>
-                </ul>
-              </td>
-              <td className="project-state">
-                <span className="badge badge-success">Success</span>
-              </td>
-              <td class="project-actions text-right" >
-                          <Link style={{marginRight:"20px"}} class="btn btn-primary btn-sm" href="#">
-                              <i class="fas fa-folder">
-                              </i>
-                              View
-                          </Link>
-                          <Link style={{marginRight:"20px"}} class="btn btn-info btn-sm" href="#">
-                              <i class="fas fa-pencil-alt">
-                              </i>
-                              Edit
-                          </Link>
-                          <Link style={{marginRight:"20px"}} class="btn btn-danger btn-sm" href="#">
-                              <i class="fas fa-trash">
-                              </i>
-                              Delete
-                          </Link>
-                      </td>
-            </tr>
-         
-            
-            
-          </tbody>
-        </table>
+                          <tr>
+                            <th style={{ width: "1%" }}>id ticket</th>
+                            <th style={{ width: "20%" }}>nombre del ticket</th>
+                            <th style={{ width: "30%" }}>correo del ticket</th>
+                            <th style={{ width: "8%" }} className="text-center">
+                              telefono del ticket
+                            </th>
+                            <th style={{ width: "20%" }}>asunto del ticket</th>
+                            <th style={{ width: "20%" }}>mensaje del ticket</th>
+                            <th style={{ width: "20%" }}>estado del ticket</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {ticket.map((item) => (
+                            <tr>
+                              <td>{item.id}</td>
+                              <td>{item.nombre}</td>
+                              <td>{item.email}</td>
+                              <td>{item.telefono}</td>
+                              <td>{item.asunto}</td>
+                              <td>{item.mensaje}</td>
+                              <td>{item.estado}</td>
+                              <td>
+                                <Link
+                                  onClick={(e) => eliminarProyecto(e, item.id)}
+                                  className="btn btn-sm btn-info float-left"
+                                >
+                                  cancelar ticket
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div className="card-footer clearfix">
+                    <Link
+                      to={"/crearTicket"}
+                      className="btn btn-sm btn-secondary float-right"
+                    >
+                      crear ticket
+                    </Link>
+                  </div>
+        </section>
       </div>
-      {/* /.card-body */}
-    </div>
-    {/* /.card */}
-  </section>
-  {/* /.content */}
-</div>
    <footer className="main-footer">
      <strong>
        Copyright © 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.

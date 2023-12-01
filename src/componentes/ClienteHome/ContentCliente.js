@@ -1,9 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import APIInvoke from "../../utils/APIInvoke";
+import swal from "sweetalert";
 
-export default function Content() {
+
+export default function ContentCliente() {
+
   return (
-    <div style={{ backgroundImage: 'url("imagen_fondo_general.jpg")' }}>
+    <div> 
+        <div>
     <body
       style={{
         fontFamily: "Arial, sans-serif",
@@ -27,7 +32,7 @@ export default function Content() {
             backgroundImage: 'url("imagen_fondo_titulo.jpg")',
           }}
         >
-          Bienvenido a nuestro Servicio de Atención al Cliente
+          Bienvenido a nuestro servicio de atencion al cliente
         </h1>
   
         <p style={{ lineHeight: "1.6" }}>
@@ -83,6 +88,6 @@ export default function Content() {
       </div>
     </body>
   </div>
-  
-  );
+  </div>
+  )
 }

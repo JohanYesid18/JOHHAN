@@ -8,18 +8,18 @@ const Login = () => {
   const navigate = useNavigate();
 
   //Definir el estado inicial de las variables
-  const [usuario, setUsuario] = useState({
+  const [Cliente, setCliente] = useState({
       email: '',
       password: ''
   });
 
-  const { email, password } = usuario;
+  const { email, password } = Cliente;
 
   
 
   const onChange = (e) => {
-      setUsuario({
-          ...usuario,
+    setCliente({
+          ...Cliente,
           [e.target.name]: e.target.value
       });
   }
@@ -33,7 +33,7 @@ const Login = () => {
       const verificarExistenciaUsuario = async (email, password) => {
           try {
               const response = await APIInvoke.invokeGET(
-                  `/Usuarios?email=${email}&password=${password}`
+                  `/Clientes?email=${email}&password=${password}`
               );
               if (response && response.length > 0) {
                   return response[0]; // Devuelve el primer usuario que coincide
@@ -64,7 +64,7 @@ const Login = () => {
       }else{
         const usuarioExistente = await verificarExistenciaUsuario(email, password);
         const response = await APIInvoke.invokeGET(
-            `/Usuarios?email=${email}&password=${password}`
+            `/Clientes?email=${email}&password=${password}`
         );
 
         if (!usuarioExistente) {
@@ -84,10 +84,10 @@ const Login = () => {
               }
           });
       }else {
-        if (usuarioExistente.rol === 'usuario') {
-            navigate("/home", usuarioExistente.id);
-        } else if(usuarioExistente.rol === 'administrador'){
-          navigate("/Admin")
+        if (usuarioExistente.rol === 'Clientes') {
+            navigate("/Cliente", usuarioExistente.id);
+        } else if(usuarioExistente.rol === 'Empleados'){
+          navigate("/Empleado")
         } else {
             navigate("/");
         }

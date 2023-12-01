@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function HeaderEmp() {
   return (
     <div style={{backgroundColor:"#DCEFFB"}}>
       <nav style={{backgroundColor:"#13265c"}} className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -18,7 +18,7 @@ export default function Header() {
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to={"/Home"} className="nav-link" style={{color:"white"}}>
+            <Link to={"/Empleado"} className="nav-link" style={{color:"white"}}>
               Home
             </Link>
           </li>

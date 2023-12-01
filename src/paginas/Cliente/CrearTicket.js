@@ -11,10 +11,11 @@ const CrearTicket = () => {
     email: "",
     telefono: "",
     asunto: "",
-    mensaje: ""
+    mensaje: "",
+    estado: "pendiente"
   });
 
-  const { nombre, email, telefono, asunto,mensaje  } = ticket;
+  const { nombre, email, telefono, asunto, mensaje, estado  } = ticket;
 
   const onChange = (e) => {
     setTicket({
@@ -33,11 +34,12 @@ const CrearTicket = () => {
       email,
       telefono,
       asunto,
-      mensaje
+      mensaje,
+      estado
     ) => {
       try {
         const response = await APIInvoke.invokeGET(
-          `/tickets?nombre=${nombre}&email=${email}&telefono${telefono}&asunto${asunto}&mensaje${mensaje}`
+          `/tickets?nombre=${nombre}&email=${email}&telefono${telefono}&asunto${asunto}&mensaje${mensaje}&estado=${estado}`
         );
 
         if (response && response.length > 0) {
@@ -58,7 +60,8 @@ const CrearTicket = () => {
         email: ticket.email,
         telefono: ticket.telefono,
         asunto: ticket.asunto,
-        mensaje: ticket.mensaje // Hay que asegurarse que se envie bien al servidor
+        mensaje: ticket.mensaje,
+        estado: ticket.estado // Hay que asegurarse que se envie bien al servidor
       };
       const response = await APIInvoke.invokePOST(`/tickets`, data);
       const mensaje = response.msg;
@@ -102,6 +105,7 @@ const CrearTicket = () => {
           telefono: "",
           asunto: "",
           mensaje: "",
+          estado:""
         });
       }
     }
@@ -131,7 +135,7 @@ const CrearTicket = () => {
            </Link>
          </li>
          <li className="nav-item d-none d-sm-inline-block">
-           <Link to={"/Home"} className="nav-link" style={{color:"white"}}>
+           <Link to={"/Cliente"} className="nav-link" style={{color:"white"}}>
              Home
            </Link>
          </li>
@@ -218,7 +222,7 @@ const CrearTicket = () => {
      </nav>
      <aside style={{backgroundColor:"#13265c"}} className="main-sidebar sidebar-dark-primary elevation-4">
        {/* Brand Logo */}
-       <Link to={"#"} className="brand-link">
+       <Link to={"/Cliente"} className="brand-link">
          <img
            src="dist/img/s.png"
            alt="AdminLTE Logo"
@@ -273,23 +277,23 @@ const CrearTicket = () => {
         with font-awesome or any other icon font library */}
 
              <li className="nav-item">
-               <Link to={"/Home"} className="nav-link">
+               <Link to={"/Cliente"} className="nav-link">
                  <i className="nav-icon fas fa-th" />
                  <p>Bienvenido</p>
                </Link>
              </li>
              <li className="nav-item">
-               <a href="#" className="nav-link">
+               <Link href="#" className="nav-link">
                  <i className="nav-icon fas fa-copy" />
                  <p>
                    Atencion al cliente
                    <i className="fas fa-angle-left right" />
                    <span className="badge badge-info right">6</span>
                  </p>
-               </a>
+               </Link>
                <ul className="nav nav-treeview">
                  <li className="nav-item">
-                   <Link to={"/crearsolicitud"} className="nav-link">
+                   <Link to={"/crearTicket"} className="nav-link">
                      <i className="far fa-circle nav-icon" />
                      <p>Crear Ticket</p>
                    </Link>
@@ -313,24 +317,18 @@ const CrearTicket = () => {
                </ul>
              </li>
              <li className="nav-item">
-               <a href="#" className="nav-link">
+               <Link href="#" className="nav-link">
                  <i className="nav-icon fas fa-chart-pie" />
                  <p>
-                   Chat
+                   Chats
                    <i className="right fas fa-angle-left" />
                  </p>
-               </a>
+               </Link>
                <ul className="nav nav-treeview">
                  <li className="nav-item">
                    <a href="pages/charts/chartjs.html" className="nav-link">
                      <i className="far fa-circle nav-icon" />
-                     <p>Cliente</p>
-                   </a>
-                 </li>
-                 <li className="nav-item">
-                   <a href="pages/charts/flot.html" className="nav-link">
-                     <i className="far fa-circle nav-icon" />
-                     <p>Empleado</p>
+                     <p>Ver Chat</p>
                    </a>
                  </li>
                </ul>
@@ -426,17 +424,21 @@ const CrearTicket = () => {
                  </div>
                  <div className="form-group">
                    <label style={{color:"white"}} htmlFor="asunto">Asunto:</label>
-                   <input
-                     style={{backgroundColor:"#DCEFFB",color: "black", borderColor: "white", borderRadius:"20px"}}
-                     type="text"
-                     className="form-control" 
-                     placeholder="asunto" 
-                     id="asunto" 
-                     name="asunto"
-                     value={asunto} 
-                     onChange={onChange}
-                     required
-                   />
+                   <select
+                  name="asunto"
+                  className="form-control"
+                  placeholder="tipo de asunto"
+                  value={asunto}
+                  onChange={onChange}
+                  required
+                >
+                  <option >Area Academica</option>
+                  <option >Area de la Salud</option>
+                  <option >Area Administrativa</option>
+                  <option >Postulaciones</option>
+                  <option >Constancias</option>
+                  <option >Formularios Electronicos</option>
+                </select>
                  </div>
                  <div className="form-group">
                    <label style={{color:"white"}} htmlFor="mensaje">Mensaje:</label>
@@ -454,7 +456,7 @@ const CrearTicket = () => {
                  </div>
                  <div className="row">
                <div className="col-12">
-                 <Link to={"/Home"} className="btn btn-secondary"
+                 <Link to={"/Cliente"} className="btn btn-secondary"
                  style={{
                    backgroundColor: "white",
                    borderColor: "#DCEFFB",
